@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
-    "run": "node index.js"
+    "build": "node index.js"
   },
   "keywords": [],
   "author": "",
