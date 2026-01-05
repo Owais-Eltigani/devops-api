@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors'; 
 import router from './routes/auth.route.js';
+import { securityMiddleware } from './middleware/security.middleware.js';
 
 const app = express();
 app.use(helmet());
@@ -15,6 +16,10 @@ app.use(morgan('combined', { stream: { write: message => logger.info(message.tri
 app.use('/logs', express.static('logs'));
 app.use(cors());
 app.use(cookieParser());
+app.use(express.static('public'));
+
+//* custom made to: Apply security middleware
+app.use(securityMiddleware);
 // Load environment variables from .env file
 dotenv.config();    
 const PORT =  3000;

@@ -14,6 +14,41 @@ export const hashPassword = (password) => {
     }
 }
 
+export const verifyPassword = (password, hashedPassword) => {
+    try {
+        return bcrypt.compareSync(password, hashedPassword);
+    } catch (error) {
+        logger.error('Error verifying password:', error);
+        throw new Error('Password verification failed');
+    }
+}
+
+export const loginUser = async ({ email, password }) => {
+    try {
+        const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+
+        if (!user) {
+            throw new Error('Invalid email or password');
+        }
+
+        const isPasswordValid = verifyPassword(password, user.password);
+
+        if (!isPasswordValid) {
+            throw new Error('Invalid email or password');
+        }
+
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        };
+    } catch (error) {
+        logger.error('Error logging in user:', error);
+        throw error;
+    }
+}
+
 export const createUser = async ({name, email, password, role="user"}) => {
     try {
         const userExist = db.select().from("users").where(eq(users.email, email)).limit(1); 
